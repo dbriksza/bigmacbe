@@ -11,7 +11,7 @@ const cors = require("cors");
 server.use(bodyParser.json());
 server.use(cors());
 
-//HELPER FUNCTION
+//HELPER FUNCTION to get random country for comparison
 function randomValueOf(obj) {
   var keys = Object.keys(obj);
   var len = keys.length;
@@ -25,8 +25,10 @@ server.get("/", (req, res) => {
 });
 
 server.post("/ip", (req, res) => {
+  //IP is sent by the client in the body (handled on frontend)
   let ip = req.body.ip;
   let country = null;
+  //axios call to get country based on IP
   axios
     .get(`https://ipvigilante.com/json/${ip}/country_name`)
     .then((response) => {
@@ -44,6 +46,7 @@ server.post("/ip", (req, res) => {
     });
 });
 
+//data is stored as a JSON and has been formatted for efficiency
 const countryData = {
   Argentina: {
     Date: "2016-01-01",
