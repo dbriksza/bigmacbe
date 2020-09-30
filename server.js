@@ -11,25 +11,33 @@ const cors = require("cors");
 server.use(bodyParser.json());
 server.use(cors());
 
+//HELPER FUNCTION
+function randomValueOf(obj) {
+  var keys = Object.keys(obj);
+  var len = keys.length;
+  var rnd = Math.floor(Math.random() * len);
+  var key = keys[rnd];
+  return key;
+}
+
 server.get("/", (req, res) => {
   res.status(200).json("seems to be working");
 });
 
-server.get("/ip", (req, res) => {
-  let ip = 0;
+server.post("/ip", (req, res) => {
+  let ip = req.body.ip;
   let country = null;
   axios
-    .get("https://jsonip.com/")
+    .get(`https://ipvigilante.com/json/${ip}/country_name`)
     .then((response) => {
-      ip = response.data.ip;
-      console.log(ip);
-      axios
-        .get(`https://ipvigilante.com/json/${ip}/country_name`)
-        .then((response) => {
-          country = response.data.data.country_name;
-          console.log(country);
-          res.status(201).json(countryData[country.replace(/\s/g, "_")]);
-        });
+      country = response.data.data.country_name;
+      // console.log(country);
+      res.status(201).json({
+        country: country,
+        randCountry: randomValueOf(countryData),
+        randCountryData: countryData[randomValueOf(countryData)],
+        data: countryData[country.replace(/\s/g, "_")],
+      });
     })
     .catch((err) => {
       console.log(err);
